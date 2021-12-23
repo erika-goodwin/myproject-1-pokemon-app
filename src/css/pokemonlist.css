@@ -1,0 +1,17 @@
+.list-container {
+  border: 1px red solid;
+  width: 23%;
+}
+.list-container-number {
+  border: 1px blue solid;
+  text-align: center;
+}
+
+.list-container img {
+  width: 100%;
+  height: 100px;
+}
+
+.list-container-detail-wrapper {
+  text-align: center;
+}

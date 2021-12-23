@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import PokemonList from "./component/PokemonList";
 import axios from "axios";
-import Pagination from "./component/Pagination";
+
+import "./css/app.css";
 
 function App() {
   console.log("App render:");
@@ -15,36 +16,53 @@ function App() {
       .then((res) => {
         setLoadMore(res.data.next);
         const createPokemonObject = (pokemonData) => {
-          console.log("PokoeonData: ", pokemonData);
+          // console.log("PokoeonData: ", pokemonData);
           pokemonData.map(async (pokemon) => {
-            const res = await fetch(
+            const response = await axios.get(
               `https://pokeapi.co/api/v2/pokemon/${pokemon.name}`
             );
-            const data = await res.json();
-            console.log("response data:", data);
-            // const res = await axios.get(
-            //   `https://pokeapi.co/api/v2/pokemon/${pokemon.name}`
-            // );
-            // const data = await res.data;
-            setPokemon20(...pokemon20, data);
-            // setPokemon20((currentList) => [...currentList, data]);
+            // console.log("response data:", response.data);
+
+            setPokemon20((currentList) => [...currentList, response.data]);
           });
         };
         createPokemonObject(res.data.results);
       })
-      .catch();
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   useEffect(() => {
     getAllPokemons();
+    console.log("pokemon20: ", pokemon20); //1->2
   }, []);
 
   return (
-    <div>
-      <>
-        <PokemonList pokemon={pokemon20} />
-      </>
-    </div>
+    <>
+      <div className="appContainer">
+        <h1>Pokemon App</h1>
+        <div className="appContainer-pokeContainer">
+          <div className="appContainer-pokeContainer-indi">
+            {pokemon20.map((pokemon, index) => (
+              <PokemonList
+                id={pokemon.id}
+                name={pokemon.name}
+                image={pokemon.sprites.other.dream_world.front_default}
+                type={pokemon.types[0].type.name}
+                // key={index}
+                key={pokemon.id}
+              ></PokemonList>
+            ))}
+          </div>
+          <div className="appContainer-pokeContainer-btn">
+            <button className="btn btn-more" onClick={() => getAllPokemons()}>
+              Load More
+            </button>
+          </div>
+        </div>
+      </div>
+    </>
   );
 }
 

@@ -1,0 +1,33 @@
+@import-normalize;
+@import "pokemonlist.css";
+@import "button.css";
+
+html {
+  /* font-size: 20px; */
+}
+body {
+  padding: 0;
+  margin: 0;
+}
+
+.appContainer {
+}
+
+.appContainer-pokeContainer {
+}
+
+.appContainer-pokeContainer-indi {
+  border: 1px black solid;
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.appContainer-pokeContainer-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.3rem 0;
+}
