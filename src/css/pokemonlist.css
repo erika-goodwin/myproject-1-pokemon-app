@@ -1,9 +1,23 @@
 .list-container {
-  border: 1px red solid;
+  /* border: 1px red solid; */
   width: 23%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin-top: 1rem;
 }
+
+
+
+
+.list-container-card {
+  /* background-color: aliceblue; */
+  width: 170px;
+  box-shadow: 0.1rem 0.1rem 0.8rem 0.1rem rgba(128, 128, 128, 0.589);
+}
+
 .list-container-number {
-  border: 1px blue solid;
+  /* border: 1px blue solid; */
   text-align: center;
 }
 
