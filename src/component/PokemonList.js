@@ -1,11 +1,14 @@
-import React from "react";
+import React, { useContext } from "react";
+import { AiOutlineHeart } from "react-icons/ai";
+import { AiFillHeart } from "react-icons/ai";
+import { PokemonContext } from "../App";
 
 export default function PokemonList(props) {
   const { id, name, image, type } = props;
 
   const style = `list-container-card ${type}`;
 
-  // console.log("Pokemon List:", pokemon);
+  const { handleFavoritePokemon } = useContext(PokemonContext);
 
   return (
     <>
@@ -15,7 +18,8 @@ export default function PokemonList(props) {
           <div className="list-container-number">
             <p>#0{id}</p>
           </div>
-
+          <AiOutlineHeart onClick={() => handleFavoritePokemon({ id })} />
+          <AiFillHeart />
           <img src={image} alt={name}></img>
 
           <div className="list-container-detail-wrapper">
