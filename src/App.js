@@ -14,12 +14,12 @@ function App() {
   const [sortedTypePokemon, setSortedTypePokemon] = useState([]);
   const [favoritePokemon, setFavoritePokemon] = useState([]);
   const [loadMore, setLoadMore] = useState(
-    "https://pokeapi.co/api/v2/pokemon?limit=40"
+    "https://pokeapi.co/api/v2/pokemon?limit=100"
   );
 
-  const [pokemonArray, setPokemonArray] = useState(
-    Array.from({ length: 1118 }, (_, i) => i + 1)
-  );
+  // const [pokemonArray, setPokemonArray] = useState(
+  //   Array.from({ length: 1118 }, (_, i) => i + 1)
+  // );
 
   const getAllPokemons = () => {
     axios
@@ -28,21 +28,29 @@ function App() {
         setLoadMore(res.data.next);
         const createPokemonObject = (pokemonData) => {
           // console.log("PokoeonData: ", pokemonData);
-          pokemonData.map(async (pokemon) => {
-            const response = await axios.get(
-              `https://pokeapi.co/api/v2/pokemon/${pokemon.name}`
-            );
-            // console.log("response data:", response.data);
+          const allPokemon = Promise.all(
+            pokemonData.map(async (pokemon) => {
+              console.log("#32 pokemonData: ", pokemon);
+              let pokemonJSON = localStorage.getItem(`POKEMON_${pokemon.name}`);
+              if (!pokemonJSON) {
+                const response = await axios.get(
+                  `https://pokeapi.co/api/v2/pokemon/${pokemon.name}`
+                );
 
-            const dataFromAPI = response.data;
-            // console.log("data from API: ", dataFromAPI);
-            // console.log("data from API ID: ", dataFromAPI.id);
-            pokemonArray.splice(dataFromAPI.id, 1, dataFromAPI);
+                pokemonJSON = response.data;
+                // const pokemonJSON = response.data;
+                localStorage.setItem(
+                  `POKEMON_${pokemon.name}`,
+                  JSON.stringify(pokemonJSON)
+                );
+              }
 
-            setPokemon20((currentList) => [...currentList, dataFromAPI]);
-            // setPokemonArray((currentList) => [...currentList, dataFromAPI]);
-          });
+              setPokemon20((currentList) => [...currentList, pokemonJSON]);
+              return pokemonJSON;
+            })
+          ).then((allPokemon) => console.log("all pokemon: ", allPokemon));
         };
+
         createPokemonObject(res.data.results);
       })
       .catch((error) => {
@@ -78,17 +86,20 @@ function App() {
   useEffect(() => {
     getAllPokemons();
 
-    console.log(pokemonArray);
+    // console.log(pokemonArray);
   }, []);
 
   useEffect(() => {
+    // console.log("pokemon 20 ", pokemon20);
     filterType("");
+
     //set context input value and use it as INPUT
   }, [pokemon20]);
 
   const filterType = (type) => {
     const allData = pokemon20;
     const selectedType = type;
+    // console.log("all data of filterType: ", allData);
     const filteredData = allData.filter((p) =>
       p.types[0].type.name.startsWith(selectedType)
     );
