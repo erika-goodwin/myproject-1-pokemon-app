@@ -14,12 +14,47 @@ function App() {
   const [sortedTypePokemon, setSortedTypePokemon] = useState([]);
   const [favoritePokemon, setFavoritePokemon] = useState([]);
   const [loadMore, setLoadMore] = useState(
-    "https://pokeapi.co/api/v2/pokemon?limit=100"
+    "https://pokeapi.co/api/v2/pokemon?limit=50"
   );
 
-  // const [pokemonArray, setPokemonArray] = useState(
-  //   Array.from({ length: 1118 }, (_, i) => i + 1)
-  // );
+  //[[Saving at Local host ]]
+
+  // const getAllPokemons = () => {
+  //   axios
+  //     .get(loadMore)
+  //     .then((res) => {
+  //       setLoadMore(res.data.next);
+  //       const createPokemonObject = (pokemonData) => {
+  //         // console.log("PokoeonData: ", pokemonData);
+  //         const allPokemon = Promise.all(
+  //           pokemonData.map(async (pokemon) => {
+  //             // console.log("#32 pokemonData: ", pokemon);
+  //             let pokemonJSON = localStorage.getItem(`POKEMON_${pokemon.name}`);
+  //             if (!pokemonJSON) {
+  //               const response = await axios.get(
+  //                 `https://pokeapi.co/api/v2/pokemon/${pokemon.name}`
+  //               );
+
+  //               pokemonJSON = response.data;
+  //               // const pokemonJSON = response.data;
+  //               localStorage.setItem(
+  //                 `POKEMON_${pokemon.name}`,
+  //                 JSON.stringify(pokemonJSON)
+  //               );
+  //             }
+
+  //             setPokemon20((currentList) => [...currentList, pokemonJSON]);
+  //             return pokemonJSON;
+  //           })
+  //         ).then((allPokemon) => console.log("all pokemon: ", allPokemon));
+  //       };
+
+  //       createPokemonObject(res.data.results);
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //     });
+  // };
 
   const getAllPokemons = () => {
     axios
@@ -28,60 +63,23 @@ function App() {
         setLoadMore(res.data.next);
         const createPokemonObject = (pokemonData) => {
           // console.log("PokoeonData: ", pokemonData);
-          const allPokemon = Promise.all(
-            pokemonData.map(async (pokemon) => {
-              console.log("#32 pokemonData: ", pokemon);
-              let pokemonJSON = localStorage.getItem(`POKEMON_${pokemon.name}`);
-              if (!pokemonJSON) {
-                const response = await axios.get(
-                  `https://pokeapi.co/api/v2/pokemon/${pokemon.name}`
-                );
+          pokemonData.map(async (pokemon) => {
+            const response = await axios.get(
+              `https://pokeapi.co/api/v2/pokemon/${pokemon.name}`
+            );
+            // console.log("response data:", response.data);
 
-                pokemonJSON = response.data;
-                // const pokemonJSON = response.data;
-                localStorage.setItem(
-                  `POKEMON_${pokemon.name}`,
-                  JSON.stringify(pokemonJSON)
-                );
-              }
-
-              setPokemon20((currentList) => [...currentList, pokemonJSON]);
-              return pokemonJSON;
-            })
-          ).then((allPokemon) => console.log("all pokemon: ", allPokemon));
+            const dataFromAPI = response.data;
+            // console.log("data from API: ", dataFromAPI);
+            setPokemon20((currentList) => [...currentList, dataFromAPI]);
+          });
         };
-
         createPokemonObject(res.data.results);
       })
       .catch((error) => {
         console.log(error);
       });
   };
-  // const getAllPokemons = () => {
-  //   axios
-  //     .get(loadMore)
-  //     .then((res) => {
-  //       setLoadMore(res.data.next);
-  //       const createPokemonObject = (pokemonData) => {
-  //         // console.log("PokoeonData: ", pokemonData);
-  //         pokemonData.map(async (pokemon) => {
-  //           const response = await axios.get(
-  //             `https://pokeapi.co/api/v2/pokemon/${pokemon.name}`
-  //           );
-  //           // console.log("response data:", response.data);
-
-  //           const dataFromAPI = response.data;
-  //           // console.log("data from API: ", dataFromAPI);
-  //           setPokemon20((currentList) => [...currentList, dataFromAPI]);
-  //           setPokemonArray((currentList) => [...currentList, dataFromAPI]);
-  //         });
-  //       };
-  //       createPokemonObject(res.data.results);
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //     });
-  // };
 
   useEffect(() => {
     getAllPokemons();
@@ -98,6 +96,7 @@ function App() {
 
   const filterType = (type) => {
     const allData = pokemon20;
+    // console.log("Filter All data: ", allData);
     const selectedType = type;
     // console.log("all data of filterType: ", allData);
     const filteredData = allData.filter((p) =>
@@ -117,9 +116,11 @@ function App() {
   };
 
   const handleFavoritePokemon = (clickedId) => {
-    console.log("clicked Id: ", clickedId.id); //1
+    console.log("clicked Id: ", clickedId.id); //#001
+
     const allData = pokemon20;
-    console.log("all data of handleFav: ", allData);
+    const pickedPokemon = allData.filter((p) => p.id === clickedId.id);
+    console.log("clicked fav pokemon: ", pickedPokemon);
 
     // array of favorite
     const array = favoritePokemon;
@@ -133,27 +134,23 @@ function App() {
 
     array.length !== 0 &&
       array.map((ele, index) => {
-        // console.log("ele.id === clickedId.id:", ele.id === clickedId.id);
+        console.log("array.id: ", ele.id);
         if (ele.id === clickedId.id) {
-          array.splice(index, 1);
+          ele.splice(index, 1);
           addArray = false;
         }
       });
 
-    //get the object of the selected Id
-
     // setArray if addArray is true
-    console.log("addArray after filter: ", addArray);
-    console.log("allData.id: ", allData[0].id);
+    // addArray && setFavoritePokemon((curr) => [...curr, { pickedPokemon }]);
+    addArray && array.push(pickedPokemon);
 
-    //somthing is not going well. probably object array related.
+    // console.log("addArray after filter: ", addArray);
+    // console.log("fav favoritePokemon: ", favoritePokemon);
 
-    // const addingPokemon = allData.filter((p) => p.id === clickedId);
-    // console.log("adding pokemon: ", addingPokemon);
-
-    // addArray && array.push(addingPokemon);
-    // setFavoritePokemon([...array]);
-    // console.log("pokemon fav array after setState: ", array);
+    setFavoritePokemon([...array]);
+    console.log("pokemon fav array after setState: ", array);
+    
   };
 
   const PokemonContextValue = {
